@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+import numpy as np
 from midiutil import MIDIFile
 
 T_music = 120 # Duration of the music [seconds]
@@ -7,7 +6,9 @@ T_window = 0.5 # Duration of a window [seconds]
 N_windows = T_music/T_windows
 Tempo = T_window * 60
 
-## Write translation table : Note <-> frequency
+## Write translation frequency function : Note <-> frequency
+def freq2note(f):
+    return 69+np.round(12*np.log2(f/440))
 
 ## Decompose sigmal procedure
 # 1. Decompose the signal into N windows
@@ -15,7 +16,6 @@ Tempo = T_window * 60
 # 3.    compute fft window : F(f)
 # 4.    compute corresponding notes and write it down
 #       MIDIFile.addNote(track, channel, pitch=freq2Note(f), time=i*T_window, duration=T_window, volume=|F(f)|)
-
 
 #           C , D , E , F , G,  A , B , C
 #           C , D , E , F , G, 440 , B , C , D , E , F , G , 880
