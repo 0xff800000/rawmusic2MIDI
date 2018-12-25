@@ -30,9 +30,9 @@ x = carrier
 
 # fs, x = wavfile.read('peer.wav')
 # fs, x = wavfile.read('notorious.wav')
-fs, x = wavfile.read('ave.wav')
+# fs, x = wavfile.read('ave.wav')
 # fs, x = wavfile.read('gc.wav')
-# fs, x = wavfile.read('hello.wav')
+fs, x = wavfile.read('hello.wav')
 x = x / np.max(np.abs(x))
 # x = np.mean(x, axis=1)
 plt.plot(x)
@@ -113,18 +113,26 @@ MyMIDI.addTempo(track, time, tempo)
 
 for i in range(Sxx.shape[1]):
     s = Sxx[:,i]
-    notes_in_window = np.zeros(Sxx.shape[0])
+    # notes_in_window = np.zeros(Sxx.shape[0])
+    notes_in_window = {}
     for j,volume in enumerate(s):
         if notes[j]<21 or notes[j]>108 : continue
         if volume < 0: continue
         # vol = 127*(volume/np.max(s))
         # vol = 127*(volume/max_Sxx)
         # notes_in_window[j] += vol
-        notes_in_window[j] += volume
+        if notes[j] in notes_in_window:
+            if notes_in_window[notes[j]] + volume <= 255:
+                notes_in_window[notes[j]] += volume
+            else:
+                notes_in_window[notes[j]] = 255
+        else:
+            notes_in_window[notes[j]] = volume
         # notes_in_window[j] += k*np.log(volume)
 
-    note_played = []
-    for j,volume in enumerate(notes_in_window):
+    # note_played = []
+    # for j,volume in enumerate(notes_in_window):
+    for j,volume in notes_in_window.items():
         if math.isnan(volume): continue
         volume = int(volume)
         if volume < 10: continue
@@ -132,7 +140,8 @@ for i in range(Sxx.shape[1]):
         # if notes[j] in note_played: continue
         # note_played.append(notes[j])
         # MyMIDI.addNote(track, channel, notes[j], time + i * T_window , T_window, volume)
-        MyMIDI.addNote(track, channel, notes[j], time + i  , 1, volume)
+        # MyMIDI.addNote(track, channel, notes[j], time + i  , 1, volume)
+        MyMIDI.addNote(track, channel, j, time + i  , 1, volume)
 
 # print("end")
 
