@@ -34,12 +34,12 @@ plt.plot(x)
 plt.show()
 
 ## Fliter High pass signal
-b = signal.firwin(101, cutoff=10, fs=fs, pass_zero=False)
-x = signal.lfilter(b, [1.0], x)
+# b = signal.firwin(101, cutoff=10, fs=fs, pass_zero=False)
+# x = signal.lfilter(b, [1.0], x)
 
 ## Create Spectrogram
 T = 2000
-T_window = 100
+T_window = 70
 # f, t, Sxx = signal.spectrogram(x, fs)
 # f, t, Sxx = signal.spectrogram(x, fs, nfft=88,nperseg=88)
 # f, t, Sxx = signal.spectrogram(x, fs, return_onesided=True, nfft=256)
@@ -52,11 +52,13 @@ print(notes)
 print(np.unique(np.array(notes)))
 f, Sxx, notes = removeRedundant(f,Sxx,notes)
 
+
 ## Rescale signal log
 max_out = 255
 dy = np.max(Sxx)-np.min(Sxx)
 Sxx -= np.min(Sxx)
 Sxx = max_out/dy * Sxx
+Sxx = np.diff(Sxx)
 Sxx += 1
 k = max_out/np.log(max_out)
 Sxx = k*np.log(Sxx)
@@ -106,14 +108,14 @@ for i in range(Sxx.shape[1]):
     notes_in_window = np.zeros(Sxx.shape[0])
     for j,volume in enumerate(s):
         if notes[j]<21 or notes[j]>108 : continue
-        if volume <10: continue
+        if volume < 0: continue
         notes_in_window[j] += volume
 
     for j,volume in enumerate(notes_in_window):
         if math.isnan(volume): continue
         volume = int(volume)
         if volume == 0: continue
-        print(notes[j]," ",volume)
+        # print(notes[j]," ",volume)
         MyMIDI.addNote(track, channel, notes[j], time + i  , 1, volume)
 
 with open(filename+".mid", "wb") as output_file:
