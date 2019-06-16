@@ -39,7 +39,7 @@ plt.show()
 
 ## Create Spectrogram
 T = 2000
-T_window = 70
+T_window = 50
 # f, t, Sxx = signal.spectrogram(x, fs)
 # f, t, Sxx = signal.spectrogram(x, fs, nfft=88,nperseg=88)
 # f, t, Sxx = signal.spectrogram(x, fs, return_onesided=True, nfft=256)
